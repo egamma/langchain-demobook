@@ -1,0 +1,383 @@
+{
+    "cells": [
+        {
+            "language": "markdown",
+            "source": [
+                "# LangChain Demo Book\n\n## What is langchain?\n\n- A library to implement applications using LLMs\n- Supports Python and TS (npm install langchain)\n\n### Components\n\n- Wrappers for LLM models (OpenAI, AzureAI, HuggingFace, …)\n- Prompt templates\n- Documents, TextSplitters, Embeddings and VectorStores\n\n### Chains\n\n- Assembles components, e.g. LLM model, pattern template\n- SequentialChains\n- Chains + Prompt engineering\n  - SummarizationChain – summarize a document\n  - RetrievalQAChain  –  answer question for indexed documents \n\n### Agents & Tools\n\nSee below\n\n## Documentation\n- Concepts https://docs.langchain.com/docs/\n- Python https://python.langchain.com/en/latest/\n- TypeScript https://js.langchain.com/docs/\n\n\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Models\n\nSupports OpenAI, Azure, HuggingFace, and [more](https://js.langchain.com/docs/modules/models/llms/integrations).\n\n**Reminder** to run the cells you need a `.env` file with the variables:\n```\nOPENAI_API_KEY= __your key__\nSERPAPI_API_KEY= __your key__\n```"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import * as dotenv from \"dotenv\";\n\nimport { OpenAI } from \"langchain/llms/openai\";\n\ndotenv.config();\n\nconst model = new OpenAI({\n  modelName: \"gpt-3.5-turbo\",\n  openAIApiKey: process.env.OPENAI_API_KEY,\n});\n\nconst res = await model.call(\n  \"What's a good idea for an application to build with GPT-4?\"\n);\n\nconsole.log(res);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "As an AI language model, GPT-4 can be used in various applications. Here are some ideas:",
+                                "",
+                                "1. Writing assistant: GPT-4 can be used to assist in writing tasks such as creative writing, article, and blog post writing. It can suggest relevant content to write about, ensure grammatical accuracy, and offer suggestions for improving sentence structure and clarity.",
+                                "",
+                                "2. Content curation: GPT-4 can be used to curate content on social media or news websites by finding the most relevant and engaging articles, images, and videos based on user preferences.",
+                                "",
+                                "3. Personalized chatbot: GPT-4 can be used to create custom chatbots that can converse with customers in a personalized manner and offer product recommendations or support.",
+                                "",
+                                "4. Storytelling: GPT-4 can be used to create engaging and interactive stories that can be tailored to user preferences. The user can give instructions on how they want the story to progress, and GPT-4 can generate personalized content.",
+                                "",
+                                "5. Legal drafting: GPT-4 can be used to assist lawyers in drafting legal contracts, agreements, and other legal documents. It can suggest legal language, check for inconsistencies, and identify potential legal issues.",
+                                "",
+                                "6. Personal shopping assistant: GPT-4 can be used to create personalized shopping experiences by suggesting products based on user preferences, reading reviews, and comparing prices. This can help users find the product they need quickly and efficiently.",
+                                "",
+                                "7. Language translation: GPT-4 can be used to enhance language translation applications by offering more accurate translations, providing better context understanding, and translating slang or idiomatic expressions.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Chains\n\nAssemble components. In this case a prompt and an LLM.\n\nLangChain provides a Prompt template language with variables."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { LLMChain } from \"langchain/chains\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst model = new OpenAI({ temperature: 0.9 });\n\nconst prompt = new PromptTemplate({\n    template: \"What is a good name for a company that makes {product}?\",\n    inputVariables: [\"product\"],\n});\n\nconst chain = new LLMChain({ llm: model, prompt });\n\nconst res = await chain.call({ product: \"colorful socks\" });\nconsole.log(res);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{ text: '\\n\\nFunkyToes Wear.' }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Sequential Chains\n\nPrompt1 -> LLM -> Prompt2 -> LLM"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { LLMChain, SimpleSequentialChain } from \"langchain/chains\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst model = new OpenAI({ temperature: 0.9 });\n\nconst dishPrompt = new PromptTemplate({\n    template: `Your job is to come up with the name of a classic dish from the location that the users suggests.\n    % USER LOCATION\n    {location}\n    YOUR RESPONSE:`,\n    inputVariables: [\"location\"],\n});\n\nconst recipePrompt = new PromptTemplate({\n    template: `Given a dish, give a short and simple recipe on how to make that dish at home.\n    % DISH\n    {dish}\n    YOUR RESPONSE:Suggest a recipe for this {dish}?`,\n    inputVariables: [\"dish\"],\n});\n\nconst dishChain = new LLMChain({ llm: model, prompt: dishPrompt });\nconst recipeChain = new LLMChain({ llm: model, prompt: recipePrompt });\n\nconst overallChain = new SimpleSequentialChain({\n    chains: [dishChain, recipeChain],\n    verbose: true,\n});\nconst res = await overallChain.run(\"Rome\");\nconsole.log(res);\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m\u001b[1m1:chain:simple_sequential_chain\u001b[22m\u001b[39m] Entering Chain run with input: {",
+                                "  \"input\": \"Rome\"",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > 2:chain:llm_chain > \u001b[1m3:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Your job is to come up with the name of a classic dish from the location that the users suggests.\\n    % USER LOCATION\\n    Rome\\n    YOUR RESPONSE:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m2:chain:llm_chain\u001b[22m\u001b[39m] [1.02s] Exiting Chain run with output: {",
+                                "  \"text\": \"\\nSpaghetti alla Carbonara\"",
+                                "}",
+                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m4:chain:llm_chain\u001b[22m\u001b[39m] Entering Chain run with input: {",
+                                "  \"dish\": \"\\nSpaghetti alla Carbonara\"",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > 4:chain:llm_chain > \u001b[1m5:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Given a dish, give a short and simple recipe on how to make that dish at home.\\n    % DISH\\n    \\nSpaghetti alla Carbonara\\n    YOUR RESPONSE:Suggest a recipe for this \\nSpaghetti alla Carbonara?\"",
+                                "  ]",
+                                "}",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m4:chain:llm_chain\u001b[22m\u001b[39m] [19.96s] Exiting Chain run with output: {",
+                                "  \"text\": \" \\n\\nIngredients: \\n- 1/2 pound spaghetti \\n- 1/4 cup extra-virgin olive oil \\n- 1/2 cup diced onion \\n- 2 cloves garlic, finely minced \\n- 1/2 cup diced pancetta \\n- 2 large eggs, lightly beaten \\n- 1/4 cup freshly grated Parmesan cheese \\n- Salt and freshly ground pepper \\n- 2 tablespoons chopped fresh parsley \\n\\nInstructions: \\n1. Bring a large pot of salted water to a boil. Add the spaghetti and cook until al dente. \\n2. Heat the oil in a large skillet over medium heat. Add the onion and garlic and sauté until tender, about 3 minutes. Add the pancetta and cook until it is lightly browned, about 6 minutes. \\n3. In a separate bowl, whisk together the eggs, Parmesan, salt and pepper. \\n4. Drain the spaghetti and add to the pan with the pancetta. Toss to combine. \\n5. Pour in the egg mixture and toss to coat the spaghetti. Cook until the eggs are cooked and the sauce is lightly thickened, about 2 minutes. \\n6. Sprinkle\"",
+                                "}",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m\u001b[1m1:chain:simple_sequential_chain\u001b[22m\u001b[39m] [20.98s] Exiting Chain run with output: {",
+                                "  \"output\": \" \\n\\nIngredients: \\n- 1/2 pound spaghetti \\n- 1/4 cup extra-virgin olive oil \\n- 1/2 cup diced onion \\n- 2 cloves garlic, finely minced \\n- 1/2 cup diced pancetta \\n- 2 large eggs, lightly beaten \\n- 1/4 cup freshly grated Parmesan cheese \\n- Salt and freshly ground pepper \\n- 2 tablespoons chopped fresh parsley \\n\\nInstructions: \\n1. Bring a large pot of salted water to a boil. Add the spaghetti and cook until al dente. \\n2. Heat the oil in a large skillet over medium heat. Add the onion and garlic and sauté until tender, about 3 minutes. Add the pancetta and cook until it is lightly browned, about 6 minutes. \\n3. In a separate bowl, whisk together the eggs, Parmesan, salt and pepper. \\n4. Drain the spaghetti and add to the pan with the pancetta. Toss to combine. \\n5. Pour in the egg mixture and toss to coat the spaghetti. Cook until the eggs are cooked and the sauce is lightly thickened, about 2 minutes. \\n6. Sprinkle\"",
+                                "}",
+                                " ",
+                                "",
+                                "Ingredients: ",
+                                "- 1/2 pound spaghetti ",
+                                "- 1/4 cup extra-virgin olive oil ",
+                                "- 1/2 cup diced onion ",
+                                "- 2 cloves garlic, finely minced ",
+                                "- 1/2 cup diced pancetta ",
+                                "- 2 large eggs, lightly beaten ",
+                                "- 1/4 cup freshly grated Parmesan cheese ",
+                                "- Salt and freshly ground pepper ",
+                                "- 2 tablespoons chopped fresh parsley ",
+                                "",
+                                "Instructions: ",
+                                "1. Bring a large pot of salted water to a boil. Add the spaghetti and cook until al dente. ",
+                                "2. Heat the oil in a large skillet over medium heat. Add the onion and garlic and sauté until tender, about 3 minutes. Add the pancetta and cook until it is lightly browned, about 6 minutes. ",
+                                "3. In a separate bowl, whisk together the eggs, Parmesan, salt and pepper. ",
+                                "4. Drain the spaghetti and add to the pan with the pancetta. Toss to combine. ",
+                                "5. Pour in the egg mixture and toss to coat the spaghetti. Cook until the eggs are cooked and the sauce is lightly thickened, about 2 minutes. ",
+                                "6. Sprinkle",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Summarization Chain\n\nChain comes with prompts. \nExample: Summarize the iteration plan.\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { loadSummarizationChain } from \"langchain/chains\";\nimport { MarkdownTextSplitter } from \"langchain/text_splitter\";\nimport * as fs from \"fs\";\n\nconst model = new OpenAI({ temperature: 0 });\nconst text = fs.readFileSync(\"data/iterationplan.md\", \"utf8\");\n\nconst textSplitter = new MarkdownTextSplitter({ chunkSize: 1000 });\nconst docs = await textSplitter.createDocuments([text]);\n\nconst chain = loadSummarizationChain(model, { type: \"map_reduce\" });\nconst res = await chain.call({\n    input_documents: docs,\n    verbose: true,\n});\nconsole.log({ res });\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "{",
+                                "  res: {",
+                                "    text: ' This 4-week iteration plan outlines various tasks related to accessibility, user experience, code editor, notebook editor, Python WASM-WASI extension, Source Control, Terminal, testing, API-related tasks, extensions and remote extensions, engineering, and Electron. Additionally, it includes tasks for API proposals and API finalization, as well as a deferred list of tasks.'",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Agents\n\nAn Agent is given a set of `tools` and prompts the language model for deciding the actions to perform to complete a `task`\n\n## Tools\n\n```js\ninterface Tool {\n  call(arg: string): Promise<string>; // performs the action\n\n  name: string;\n\n  description: string;  // describes the tool to the LLM model\n}\n```\n\n### Tools available out of the box\n\n- Web requests (GET/POST)\n- Web Search (google/Bing)\n- read/write local files\n\nMore tools: https://js.langchain.com/docs/modules/agents/tools/integrations/\n\nTools can be easily be extended.\n\n### Agents\n\nAn agent is configured with an LLM model and a list of Tools and then asked to complete a task with these tools.\n\n**ReAct** style ‘Action Agents’ are supported by LangChain. The model is asked to think about what action to take, then take it:\n\n1. User gives an agent a **task**\n2. **Thought**: The agent “thinks” about what to do\n3. **Action/Action Input**: The agent decides what action to take (aka what tool to use) and what the input to that tool should be\n4. **Observation**: The output of the tool\n\nRepeat steps 2-4 until the Agent “thinks” it is done\n\nThought includes reasoning about a mistake and correcting it.\n\nPapers\n- Intro paper: https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html\n- Research paper: https://arxiv.org/pdf/2210.03629.pdf\n\n`Zero-Shot-Agent`: Prompts constructed based on the tool description only\n\n\nAgents. Concept https://docs.langchain.com/docs/components/agents/\n "
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport { SerpAPI } from \"langchain/tools\";\nimport { Calculator } from \"langchain/tools/calculator\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst llm = new OpenAI({\n    modelName: \"text-davinci-003\",\n    temperature: 0\n});\nconst tools = [\n  new SerpAPI(), // Google search API\n  new Calculator() // Parse and evaluate math expressions\n];\nconst agent = await initializeAgentExecutorWithOptions(\n  tools,\n  llm, {\n  agentType: \"zero-shot-react-description\",\n  verbose: true\n}\n);\nconst result = await agent.call({\n  input: \"Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?\",\n});\nconsole.log({ result });"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m\u001b[1m1:chain:agent_executor\u001b[22m\u001b[39m] Entering Chain run with input: {",
+                                "  \"input\": \"Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?\"",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 2:chain:llm_chain > \u001b[1m3:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Answer the following questions as best you can. You have access to the following tools:\\n\\nsearch: a search engine. useful for when you need to answer questions about current events. input should be a search query.\\ncalculator: Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.\\n\\nUse the following format in your response:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: the action to take, should be one of [search,calculator]\\nAction Input: the input to the action\\nObservation: the result of the action\\n... (this Thought/Action/Action Input/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin!\\n\\nQuestion: Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[32m[tool/start]\u001b[39m [\u001b[90m1:chain:agent_executor > \u001b[1m4:tool:search\u001b[22m\u001b[39m] Entering Tool run with input: \"Olivia Wilde boyfriend\"",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 5:chain:llm_chain > \u001b[1m6:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Answer the following questions as best you can. You have access to the following tools:\\n\\nsearch: a search engine. useful for when you need to answer questions about current events. input should be a search query.\\ncalculator: Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.\\n\\nUse the following format in your response:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: the action to take, should be one of [search,calculator]\\nAction Input: the input to the action\\nObservation: the result of the action\\n... (this Thought/Action/Action Input/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin!\\n\\nQuestion: Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?\\nThought: I need to find out who Olivia Wilde's boyfriend is and then calculate his age raised to the 0.23 power.\\nAction: search\\nAction Input: \\\"Olivia Wilde boyfriend\\\"\\nObservation: Olivia Wilde started dating Harry Styles after ending her years-long engagement to Jason Sudeikis — see their relationship timeline.\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 8:chain:llm_chain > \u001b[1m9:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Answer the following questions as best you can. You have access to the following tools:\\n\\nsearch: a search engine. useful for when you need to answer questions about current events. input should be a search query.\\ncalculator: Useful for getting the result of a math expression. The input to this tool should be a valid mathematical expression that could be executed by a simple calculator.\\n\\nUse the following format in your response:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: the action to take, should be one of [search,calculator]\\nAction Input: the input to the action\\nObservation: the result of the action\\n... (this Thought/Action/Action Input/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin!\\n\\nQuestion: Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?\\nThought: I need to find out who Olivia Wilde's boyfriend is and then calculate his age raised to the 0.23 power.\\nAction: search\\nAction Input: \\\"Olivia Wilde boyfriend\\\"\\nObservation: Olivia Wilde started dating Harry Styles after ending her years-long engagement to Jason Sudeikis — see their relationship timeline.\\nThought: I now need to calculate Harry Styles' age raised to the 0.23 power.\\nAction: calculator\\nAction Input: (26)^0.23\\nObservation: 2.1156502324195268\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "{",
+                                "  result: {",
+                                "    output: \"Harry Styles is Olivia Wilde's boyfriend and his current age raised to the 0.23 power is 2.1156502324195268.\"",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Agents with Custom Tools\n\nYou can extend the set of Tools easily. Adding a simple `HelloWorldTool`."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { Tool } from \"langchain/tools\";\nimport { OpenAI } from \"langchain/llms/openai\";\nimport * as dotenv from \"dotenv\";\nimport { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport { SerpAPI } from \"langchain/tools\";\n\n\ndotenv.config();\n\nclass HelloTool extends Tool {\n    constructor(\n    ) {\n        super();\n    }\n\n    name = \"helloworld\";\n\n    async _call(input: string) {\n        return \"Hello world!\";\n    }\n\n    description =\n        \"A tool that can write hello world.\";\n}\n\nconst llm = new OpenAI({\n        modelName: \"text-davinci-003\",\n        temperature: 0\n});\n\nconst tools = [\n    new SerpAPI(),\n    new HelloTool()\n];\n\nconst agent = await initializeAgentExecutorWithOptions(\n    tools,\n    llm,\n    {\n        agentType: \"zero-shot-react-description\",\n        verbose: true\n    }\n);\n\nconst result = await agent.call({\n    input: \"I need to write hello world?\",\n});\n\nconsole.log({ result });\n"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m\u001b[1m1:chain:agent_executor\u001b[22m\u001b[39m] Entering Chain run with input: {",
+                                "  \"input\": \"I need to write hello world?\"",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 2:chain:llm_chain > \u001b[1m3:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Answer the following questions as best you can. You have access to the following tools:\\n\\nsearch: a search engine. useful for when you need to answer questions about current events. input should be a search query.\\nhelloworld: A tool that can write hello world.\\n\\nUse the following format in your response:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: the action to take, should be one of [search,helloworld]\\nAction Input: the input to the action\\nObservation: the result of the action\\n... (this Thought/Action/Action Input/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin!\\n\\nQuestion: I need to write hello world?\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 5:chain:llm_chain > \u001b[1m6:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"Answer the following questions as best you can. You have access to the following tools:\\n\\nsearch: a search engine. useful for when you need to answer questions about current events. input should be a search query.\\nhelloworld: A tool that can write hello world.\\n\\nUse the following format in your response:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: the action to take, should be one of [search,helloworld]\\nAction Input: the input to the action\\nObservation: the result of the action\\n... (this Thought/Action/Action Input/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin!\\n\\nQuestion: I need to write hello world?\\nThought: I need to use a tool to write hello world.\\nAction: helloworld\\nAction Input: N/A\\nObservation: Hello world!\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "{ result: { output: 'Hello world!' } }",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Tool using AI\n\nYou can also use AI to implement a tool. Here we use a tool that uses an LLM to answer questions."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { LLMChain } from \"langchain\";\nimport { BaseLLM } from \"langchain/llms/base\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { Tool } from \"langchain/tools\";\n\nexport class PromptTool extends Tool {\n  model: BaseLLM;\n  prompt: string;\n  name: string;\n  description: string;\n\n  constructor(model: BaseLLM, name: string, description: string, prompt: string) {\n    super();\n    this.name = name;\n    this.description = description;\n    this.prompt = prompt;\n    this.model = model;\n  }\n\n  async _call(input: string): Promise<string> {\n    const prompt = new PromptTemplate({\n      template: this.prompt,\n      inputVariables: [\"input\"],\n    });\n    const chain = new LLMChain({ llm: this.model, prompt });\n    const res = await chain.call({ input });\n    return res.output;\n  }\n}\n\n// Example usage\nconst promptTool = new PromptTool(llm,\n    'translateToGerman',\n    'A tool to translate the given input to German. The input should be a string to be translated to German',\n    'Translate the given {input} to German'\n    );"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Structured Tools\n\nTools can take structured input using the [zod](https://www.npmjs.com/package/zod) node module and you describe the schema of the input."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Inset: Zod\n\nZod is a TypeScript-first schema declaration and validation library."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { z } from \"zod\";\nimport { readFileSync } from \"fs\";\n\nconst userSchema = z.object({\n    id: z.number().min(0),\n    firstName: z.string(),\n    lastName: z.string(),\n});\n\ntype User = z.infer<typeof userSchema>;\n\n//{\n//     \"id\": 1234567890,\n//     \"firstName\": \"Joe\",\n//     \"lastName\": \"Smith\"\n// }\nconst okData = JSON.parse(readFileSync(\"data/user-ok.json\", \"utf-8\"));\n\n// {\n//     \"id\": 1234567890,\n//     \"firstname\": \"Joe\",\n//     \"lastName\": \"Smith\"\n// }\nconst nokData = JSON.parse(readFileSync(\"data/user-nok.json\", \"utf-8\"));\n\nif (userSchema.safeParse(okData).success) {\n    console.log(\"okData is correct\")\n} else {\n    console.log(\"okData is incorrect\")\n};\n\nif (userSchema.safeParse(nokData).success) {\n    console.log(\"`nokData is correct\")\n} else {\n    console.log(\"nokData is incorrect\")\n};"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "okData is correct",
+                                "nokData is incorrect",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# ChatGPT Plugin\n\nA ChatGPT Plugin is just another **Tool**.\nThe ChatGPT Plugin calls web endpoints, therefore the Tools for making web calls `RequestGetTool` and `RequestPostTool` are inlcuded."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { ChatOpenAI } from \"langchain/chat_models/openai\";\nimport { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport {\n    RequestsGetTool,\n    RequestsPostTool,\n    AIPluginTool,\n} from \"langchain/tools\";\n\n\nconst tools = [\n    new RequestsGetTool(),\n    new RequestsPostTool(),\n    await AIPluginTool.fromPluginUrl(\n        \"https://www.klarna.com/.well-known/ai-plugin.json\"\n    ),\n];\nconst agent = await initializeAgentExecutorWithOptions(\n    tools,\n    new ChatOpenAI({ temperature: 0 }),\n    {\n        agentType: \"chat-zero-shot-react-description\",\n        verbose: true\n    }\n);\n\nconst result = await agent.call({\n    input: \"what t-shirts are available in klarna, list the product names?\",\n});\n\nconsole.log({ result });"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m\u001b[1m1:chain:agent_executor\u001b[22m\u001b[39m] Entering Chain run with input: {",
+                                "  \"input\": \"what t-shirts are available in klarna, list the product names?\"",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 2:chain:llm_chain > \u001b[1m3:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"System: Answer the following questions as best you can. You have access to the following tools:\\n\\nrequests_get: A portal to the internet. Use this when you need to get specific content from a website. \\n  Input should be a  url (i.e. https://www.google.com). The output will be the text response of the GET request.\\nrequests_post: Use this when you want to POST to a website.\\n  Input should be a json string with two keys: \\\"url\\\" and \\\"data\\\".\\n  The value of \\\"url\\\" should be a string, and the value of \\\"data\\\" should be a dictionary of \\n  key-value pairs you want to POST to the url as a JSON body.\\n  Be careful to always use double quotes for strings in the json string\\n  The output will be the text response of the POST request.\\nKlarnaProducts: Call this tool to get the OpenAPI spec (and usage guide) for interacting with the Klarna Shopping API. You should only call this ONCE! What is the Klarna Shopping API useful for? Search and compare prices from thousands of online shops.\\n\\nThe way you use the tools is by specifying a json blob, denoted below by $JSON_BLOB\\nSpecifically, this $JSON_BLOB should have a \\\"action\\\" key (with the name of the tool to use) and a \\\"action_input\\\" key (with the input to the tool going here). \\nThe $JSON_BLOB should only contain a SINGLE action, do NOT return a list of multiple actions. Here is an example of a valid $JSON_BLOB:\\n\\n```\\n{\\n  \\\"action\\\": \\\"calculator\\\",\\n  \\\"action_input\\\": \\\"1 + 2\\\"\\n}\\n```\\n\\nALWAYS use the following format:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: \\n```\\n$JSON_BLOB\\n```\\nObservation: the result of the action\\n... (this Thought/Action/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin! Reminder to always use the exact characters `Final Answer` when responding.\\nHuman: what t-shirts are available in klarna, list the product names?\"",
+                                "  ]",
+                                "}",
+                                "\u001b[32m[tool/start]\u001b[39m [\u001b[90m1:chain:agent_executor > \u001b[1m4:tool:requests_get\u001b[22m\u001b[39m] Entering Tool run with input: \"https://developers.klarna.com/api/#shopping-api\"",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:agent_executor > 5:chain:llm_chain > \u001b[1m6:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"prompts\": [",
+                                "    \"System: Answer the following questions as best you can. You have access to the following tools:\\n\\nrequests_get: A portal to the internet. Use this when you need to get specific content from a website. \\n  Input should be a  url (i.e. https://www.google.com). The output will be the text response of the GET request.\\nrequests_post: Use this when you want to POST to a website.\\n  Input should be a json string with two keys: \\\"url\\\" and \\\"data\\\".\\n  The value of \\\"url\\\" should be a string, and the value of \\\"data\\\" should be a dictionary of \\n  key-value pairs you want to POST to the url as a JSON body.\\n  Be careful to always use double quotes for strings in the json string\\n  The output will be the text response of the POST request.\\nKlarnaProducts: Call this tool to get the OpenAPI spec (and usage guide) for interacting with the Klarna Shopping API. You should only call this ONCE! What is the Klarna Shopping API useful for? Search and compare prices from thousands of online shops.\\n\\nThe way you use the tools is by specifying a json blob, denoted below by $JSON_BLOB\\nSpecifically, this $JSON_BLOB should have a \\\"action\\\" key (with the name of the tool to use) and a \\\"action_input\\\" key (with the input to the tool going here). \\nThe $JSON_BLOB should only contain a SINGLE action, do NOT return a list of multiple actions. Here is an example of a valid $JSON_BLOB:\\n\\n```\\n{\\n  \\\"action\\\": \\\"calculator\\\",\\n  \\\"action_input\\\": \\\"1 + 2\\\"\\n}\\n```\\n\\nALWAYS use the following format:\\n\\nQuestion: the input question you must answer\\nThought: you should always think about what to do\\nAction: \\n```\\n$JSON_BLOB\\n```\\nObservation: the result of the action\\n... (this Thought/Action/Observation can repeat N times)\\nThought: I now know the final answer\\nFinal Answer: the final answer to the original input question\\n\\nBegin! Reminder to always use the exact characters `Final Answer` when responding.\\nHuman: what t-shirts are available in klarna, list the product names?\\n\\nThis was your previous work (but I haven't seen any of it! I only see what you return as final answer):\\nQuestion: what t-shirts are available in klarna, list the product names?\\nThought: I need to check the Klarna Shopping API to see if they have a list of available t-shirts and their names.\\nAction:\\n```\\n{\\n  \\\"action\\\": \\\"requests_get\\\",\\n  \\\"action_input\\\": \\\"https://developers.klarna.com/api/#shopping-api\\\"\\n}\\n```\\n\\nObservation: <!DOCTYPE html><html lang=\\\"en-US\\\"><head><meta charSet=\\\"utf-8\\\"/><meta http-equiv=\\\"x-ua-compatible\\\" content=\\\"ie=edge\\\"/><meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover\\\"/><script>window._onRedoclyRouteChange = function (cb) {\\n    window.__redoclyRouteChangeListenres = window.__redoclyRouteChangeListenres || [];\\n    window.__redoclyRouteChangeListenres.push(cb);\\n  }\\n  window._onRedoclyLoginResult = function(cb) {\\n    window.__redoclyLoginResultListenres =  window.__redoclyLoginResultListenres || [];\\n    window.__redoclyLoginResultListenres.push(cb);\\n  }</script><style data-href=\\\"/api/styles.b43fd1afeb1410ccf2e6.css\\\" data-identity=\\\"gatsby-global-css\\\">.ps{-ms-overflow-style:none;overflow:hidden!important;overflow-anchor:none;touch-action:auto;-ms-touch-action:auto}.ps__rail-x{bottom:0;height:15px}.ps__rail-x,.ps__rail-y{display:none;opacity:0;position:absolute;transition:background-color .2s linear,opacity .2s linear;-webkit-transition:background-color .2s linear,opacity .2s linear}.ps__rail-y{right:0;width:15px}.ps--active-x>.ps__rail-x,.ps--active-y>.ps__rail-y{background-color:transparent;display:block}.ps--focus>.ps__rail-x,.ps--focus>.ps__rail-y,.ps--scrolling-x>.ps__rail-x,.ps--scrolling-y>.ps__rail-y,.ps:hover>.ps__rail-x,.ps:hover>.ps__rail-y{opacity:.6}.ps .ps__rail-x.ps--clicking,.ps .ps__rail-x:focus,.ps .ps__rail-x:hover,.ps .ps__rail-y.ps--clicking,.ps .ps__rail-y:focus,.ps .ps__rail-y:hover{background-color:#eee;opacity:.9}.ps__thumb-x{bottom:2px;height:6px;transition:background-color .2s linear,height .2s ease-in-out;-webkit-transition:background-color .2s linear,height .2s ease-in-out}.ps__thumb-x,.ps__thumb-y{background-color:#aaa;border-radius:6px;position:absolute}.ps__thumb-y{right:2px;transition:background-color .2s linear,width .2s ease-in-out;-webkit-transition:background-color .2s linear,width .2s ease-in-out;width:6px}.ps__rail-x.ps--clicking .ps__thumb-x,.ps__rail-x:focus>.ps__thumb-x,.ps__r\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "schemas/ProductResponse\\\"}}}},\\\"503\\\":{\\\"description\\\":\\\"one or more services are unavailable\\\"}},\\\"deprecated\\\":false}}},\\\"components\\\":{\\\"schemas\\\":{\\\"Product\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"attributes\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"type\\\":\\\"string\\\"}},\\\"name\\\":{\\\"type\\\":\\\"string\\\"},\\\"price\\\":{\\\"type\\\":\\\"string\\\"},\\\"url\\\":{\\\"type\\\":\\\"string\\\"}},\\\"title\\\":\\\"Product\\\"},\\\"ProductResponse\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"products\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"$ref\\\":\\\"#/components/schemas/Product\\\"}}},\\\"title\\\":\\\"ProductResponse\\\"}}}}\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[32m[tool/start]\u001b[39m [\u001b[90m1:chain:agent_executor > \u001b[1m10:tool:requests_get\u001b[22m\u001b[39m] Entering Tool run with input: \"https://www.klarna.com/us/shopping\"",
+                                "st into English (example: translate fia med knuff to ludo board game)!\\\",\\\"required\\\":true,\\\"schema\\\":{\\\"type\\\":\\\"string\\\"}},{\\\"name\\\":\\\"size\\\",\\\"in\\\":\\\"query\\\",\\\"description\\\":\\\"number of products returned\\\",\\\"required\\\":false,\\\"schema\\\":{\\\"type\\\":\\\"integer\\\"}},{\\\"name\\\":\\\"min_price\\\",\\\"in\\\":\\\"query\\\",\\\"description\\\":\\\"(Optional) Minimum price in local currency for the product searched for. Either explicitly stated by the user or implicitly inferred from a combination of the user's request and the kind of product searched for.\\\",\\\"required\\\":false,\\\"schema\\\":{\\\"type\\\":\\\"integer\\\"}},{\\\"name\\\":\\\"max_price\\\",\\\"in\\\":\\\"query\\\",\\\"description\\\":\\\"(Optional) Maximum price in local currency for the product searched for. Either explicitly stated by the user or implicitly inferred from a combination of the user's request and the kind of product searched for.\\\",\\\"required\\\":false,\\\"schema\\\":{\\\"type\\\":\\\"integer\\\"}}],\\\"responses\\\":{\\\"200\\\":{\\\"description\\\":\\\"Products found\\\",\\\"content\\\":{\\\"application/json\\\":{\\\"schema\\\":{\\\"$ref\\\":\\\"#/components/schemas/ProductResponse\\\"}}}},\\\"503\\\":{\\\"description\\\":\\\"one or more services are unavailable\\\"}},\\\"deprecated\\\":false}}},\\\"components\\\":{\\\"schemas\\\":{\\\"Product\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"attributes\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"type\\\":\\\"string\\\"}},\\\"name\\\":{\\\"type\\\":\\\"string\\\"},\\\"price\\\":{\\\"type\\\":\\\"string\\\"},\\\"url\\\":{\\\"type\\\":\\\"string\\\"}},\\\"title\\\":\\\"Product\\\"},\\\"ProductResponse\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"products\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"$ref\\\":\\\"#/components/schemas/Product\\\"}}},\\\"title\\\":\\\"ProductResponse\\\"}}}}\\nThought:I need to use the Klarna Shopping API to search for t-shirts and get their names.\\nAction:\\n```\\n{\\n  \\\"action\\\": \\\"requests_get\\\",\\n  \\\"action_input\\\": \\\"https://www.klarna.com/us/shopping\\\"\\n}\\n```\\n\\n\\nObservation: <!DOCTYPE html>\\n<html xmlns:fb=\\\"http://www.facebook.com/2008/fbml\\\" lang=\\\"en-US\\\">\\n  <head>\\n    <meta data-react-helmet=\\\"true\\\" name=\\\"description\\\" content=\\\"Don´t overpay online! ✓ Use Klarna to find lowest prices on 3 million products from 6000 US stores. ✓ Discover your savings today!\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"robots\\\" content=\\\"index, follow\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:card\\\" content=\\\"summary_large_image\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:image\\\" content=\\\"https://www.klarna.com/sac/images/assets/content/startpage/og_start_klarna.jpg\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:image\\\" content=\\\"https://www.klarna.com/sac/images/assets/content/startpage/og_start_klarna.jpg\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:site\\\" content=\\\"Klarna\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:creator\\\" content=\\\"Klarna\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:title\\\" content=\\\"Klarna US - Save by comparing prices from 6000 US stores\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:title\\\" content=\\\"Klarna US - Save by comparing prices from 6000 US stores\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:description\\\" content=\\\"Don´t overpay online! ✓ Use Klarna to find lowest prices on 3 million products from 6000 US stores. ✓ Discover your savings today!\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:description\\\" content=\\\"Don´t overpay online! ✓ Use Klarna to find lowest prices on 3 million products from 6000 US stores. ✓ Discover your savings today!\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:site_name\\\" content=\\\"Klarna US\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:type\\\" content=\\\"website\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:url\\\" content=\\\"https://www.klarna.com/us/\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"apple-itunes-app\\\" content=\\\"app-id=1115120118\\\"/>\\n    <title data-react-helmet=\\\"true\\\">Klarna US - Save by comparing prices from 6000 US stores</title>\\n    <link data-react-helmet=\\\"true\\\" rel=\\\"alternate\\\" hrefLang=\\\"de-DE\\\" href=\\\"https://\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[34m[agent/action]\u001b[39m [\u001b[90m\u001b[1m1:chain:agent_executor\u001b[22m\u001b[39m] Agent selected action: {",
+                                "  \"tool\": \"requests_get\",",
+                                "  \"toolInput\": \"https://www.klarna.com/us/shopping/public/openai/v0/products?q=t-shirt\",",
+                                "  \"log\": \"I made another mistake. I need to use the Klarna Shopping API to search for t-shirts and get their names. I should use the GET request with the \\\"/public/openai/v0/products\\\" endpoint and include \\\"t-shirt\\\" in the query parameter.\\nAction:\\n```\\n{\\n  \\\"action\\\": \\\"requests_get\\\",\\n  \\\"action_input\\\": \\\"https://www.klarna.com/us/shopping/public/openai/v0/products?q=t-shirt\\\"\\n}\\n```\\n\\n\\n\"",
+                                "}",
+                                "\u001b[32m[tool/start]\u001b[39m [\u001b[90m1:chain:agent_executor > \u001b[1m13:tool:requests_get\u001b[22m\u001b[39m] Entering Tool run with input: \"https://www.klarna.com/us/shopping/public/openai/v0/products?q=t-shirt\"",
+                                "s/schemas/ProductResponse\\\"}}}},\\\"503\\\":{\\\"description\\\":\\\"one or more services are unavailable\\\"}},\\\"deprecated\\\":false}}},\\\"components\\\":{\\\"schemas\\\":{\\\"Product\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"attributes\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"type\\\":\\\"string\\\"}},\\\"name\\\":{\\\"type\\\":\\\"string\\\"},\\\"price\\\":{\\\"type\\\":\\\"string\\\"},\\\"url\\\":{\\\"type\\\":\\\"string\\\"}},\\\"title\\\":\\\"Product\\\"},\\\"ProductResponse\\\":{\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"products\\\":{\\\"type\\\":\\\"array\\\",\\\"items\\\":{\\\"$ref\\\":\\\"#/components/schemas/Product\\\"}}},\\\"title\\\":\\\"ProductResponse\\\"}}}}\\nThought:I need to use the Klarna Shopping API to search for t-shirts and get their names.\\nAction:\\n```\\n{\\n  \\\"action\\\": \\\"requests_get\\\",\\n  \\\"action_input\\\": \\\"https://www.klarna.com/us/shopping\\\"\\n}\\n```\\n\\n\\nObservation: <!DOCTYPE html>\\n<html xmlns:fb=\\\"http://www.facebook.com/2008/fbml\\\" lang=\\\"en-US\\\">\\n  <head>\\n    <meta data-react-helmet=\\\"true\\\" name=\\\"description\\\" content=\\\"Don´t overpay online! ✓ Use Klarna to find lowest prices on 3 million products from 6000 US stores. ✓ Discover your savings today!\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"robots\\\" content=\\\"index, follow\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:card\\\" content=\\\"summary_large_image\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:image\\\" content=\\\"https://www.klarna.com/sac/images/assets/content/startpage/og_start_klarna.jpg\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:image\\\" content=\\\"https://www.klarna.com/sac/images/assets/content/startpage/og_start_klarna.jpg\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:site\\\" content=\\\"Klarna\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:creator\\\" content=\\\"Klarna\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:title\\\" content=\\\"Klarna US - Save by comparing prices from 6000 US stores\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:title\\\" content=\\\"Klarna US - Save by comparing prices from 6000 US stores\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:description\\\" content=\\\"Don´t overpay online! ✓ Use Klarna to find lowest prices on 3 million products from 6000 US stores. ✓ Discover your savings today!\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"twitter:description\\\" content=\\\"Don´t overpay online! ✓ Use Klarna to find lowest prices on 3 million products from 6000 US stores. ✓ Discover your savings today!\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:site_name\\\" content=\\\"Klarna US\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:type\\\" content=\\\"website\\\"/><meta data-react-helmet=\\\"true\\\" property=\\\"og:url\\\" content=\\\"https://www.klarna.com/us/\\\"/><meta data-react-helmet=\\\"true\\\" name=\\\"apple-itunes-app\\\" content=\\\"app-id=1115120118\\\"/>\\n    <title data-react-helmet=\\\"true\\\">Klarna US - Save by comparing prices from 6000 US stores</title>\\n    <link data-react-helmet=\\\"true\\\" rel=\\\"alternate\\\" hrefLang=\\\"de-DE\\\" href=\\\"https://\\nThought:I made another mistake. I need to use the Klarna Shopping API to search for t-shirts and get their names. I should use the GET request with the \\\"/public/openai/v0/products\\\" endpoint and include \\\"t-shirt\\\" in the query parameter.\\nAction:\\n```\\n{\\n  \\\"action\\\": \\\"requests_get\\\",\\n  \\\"action_input\\\": \\\"https://www.klarna.com/us/shopping/public/openai/v0/products?q=t-shirt\\\"\\n}\\n```\\n\\n\\n\\nObservation: {\\\"products\\\":[{\\\"name\\\":\\\"T-shirt\\\",\\\"url\\\":\\\"https://www.klarna.com/us/shopping/pl/cl10001/3203506327/Clothing/T-shirt/?utm_source=openai&ref-site=openai_plugin\\\",\\\"price\\\":\\\"$20.99\\\",\\\"attributes\\\":[\\\"Material:Cotton\\\",\\\"Target Group:Man\\\",\\\"Color:Gray,White,Blue,Black,Orange\\\"]},{\\\"name\\\":\\\"Polo Ralph Lauren Slim Fit Cotton T-shirt 3-pack\\\",\\\"url\\\":\\\"https://www.klarna.com/us/shopping/pl/cl10001/3201838628/Clothing/Polo-Ralph-Lauren-Slim-Fit-Cotton-T-shirt-3-pack/?utm_source=openai&ref-site=openai_plugin\\\",\\\"price\\\":\\\"$34.90\\\",\\\"attributes\\\":[\\\"Material:Cotton\\\",\\\"Target Group:Man\\\",\\\"Color:Gray,White,Blue,Multicolor,Black\\\"]},{\\\"name\\\":\\\"Psycho Bunny Mens Copa Gradient Logo Graphic Tee\\\",\\\"url\\\":\\\"https://www.klarna.com/us/shopping/pl/cl10001/3203663222/Clothing/Psycho-Bunny-Mens-Copa-Gradient-Logo-Graphic-Tee/?utm_source=openai&ref-site=openai_plugin\\\",\\\"price\\\":\\\"$49.00\\\",\\\"attributes\\\":[\\\"Material:Cotton\\\",\\\"Target Group:Man\\\",\\\"Color:White,Blue,Black,Orange\\\"]},{\\\"name\\\":\\\"Armani Exchange Mens T-shirt\\\",\\\"url\\\":\\\"https://www.klarna.com/us/shopping/pl/cl10001/3202351449/Clothing/Armani-Exchange-Mens-T-shirt/?utm_source=openai&ref-site=openai_plugin\\\",\\\"price\\\":\\\"$35.63\\\",\\\"attributes\\\":[\\\"Material:Cotton\\\",\\\"Target Group:Man,Woman,Unisex\\\",\\\"Color:Black\\\"]},{\\\"name\\\":\\\"Palm Angels Classic Logo T-shirt\\\",\\\"url\\\":\\\"https://www.klarna.com/us/shopping/pl/cl10001/3200096338/Clothing/Palm-Angels-Classic-Logo-T-shirt/?utm_source=openai&ref-site=openai_plugin\\\",\\\"price\\\":\\\"$138.20\\\",\\\"attributes\\\":[\\\"Material:Cotton\\\",\\\"Target Group:Man\\\",\\\"Color:Black\\\"]}]}\\nThought:\"",
+                                "  ]",
+                                "}",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m\u001b[1m1:chain:agent_executor\u001b[22m\u001b[39m] [86.14s] Exiting Chain run with output: {",
+                                "  \"output\": \"T-shirt, Polo Ralph Lauren Slim Fit Cotton T-shirt 3-pack, Psycho Bunny Mens Copa Gradient Logo Graphic Tee, Armani Exchange Mens T-shirt, and Palm Angels Classic Logo T-shirt.\"",
+                                "}",
+                                "{",
+                                "  result: {",
+                                "    output: 'T-shirt, Polo Ralph Lauren Slim Fit Cotton T-shirt 3-pack, Psycho Bunny Mens Copa Gradient Logo Graphic Tee, Armani Exchange Mens T-shirt, and Palm Angels Classic Logo T-shirt.'",
+                                "  }",
+                                "}",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

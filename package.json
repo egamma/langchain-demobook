@@ -1,0 +1,23 @@
+{
+  "name": "langchain-ts-starter",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+
+  "keywords": [
+    "langchain"
+  ],
+
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "hnswlib-node": "^1.4.2",
+    "langchain": "^0.0.78",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.5",
+    "typescript": "^5.0.4"
+  }
+}
