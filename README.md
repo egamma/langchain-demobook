@@ -1,6 +1,6 @@
 # Langchain Demo Notebook
 
-- Open the workspace in a devcontainer
+- Open the workspace in a **Devcontainer** or **Codespace**
 - Open the notebook `Demobook.nnb`
 
 To run code in the cells you need to create a `.env` file with the following variables:
