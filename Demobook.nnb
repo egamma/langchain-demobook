@@ -25,21 +25,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "As an AI language model, GPT-4 can be used in various applications. Here are some ideas:",
-                                "",
-                                "1. Writing assistant: GPT-4 can be used to assist in writing tasks such as creative writing, article, and blog post writing. It can suggest relevant content to write about, ensure grammatical accuracy, and offer suggestions for improving sentence structure and clarity.",
-                                "",
-                                "2. Content curation: GPT-4 can be used to curate content on social media or news websites by finding the most relevant and engaging articles, images, and videos based on user preferences.",
-                                "",
-                                "3. Personalized chatbot: GPT-4 can be used to create custom chatbots that can converse with customers in a personalized manner and offer product recommendations or support.",
-                                "",
-                                "4. Storytelling: GPT-4 can be used to create engaging and interactive stories that can be tailored to user preferences. The user can give instructions on how they want the story to progress, and GPT-4 can generate personalized content.",
-                                "",
-                                "5. Legal drafting: GPT-4 can be used to assist lawyers in drafting legal contracts, agreements, and other legal documents. It can suggest legal language, check for inconsistencies, and identify potential legal issues.",
-                                "",
-                                "6. Personal shopping assistant: GPT-4 can be used to create personalized shopping experiences by suggesting products based on user preferences, reading reviews, and comparing prices. This can help users find the product they need quickly and efficiently.",
-                                "",
-                                "7. Language translation: GPT-4 can be used to enhance language translation applications by offering more accurate translations, providing better context understanding, and translating slang or idiomatic expressions.",
+                                "As an AI language model, GPT-4 could be used to create a language learning application that incorporates natural language processing and personalized feedback. The application would allow users to input text in the language they are trying to learn, and GPT-4 would analyze the text and provide feedback on grammar, vocabulary, and structure in real time. Additionally, the app could generate personalized language learning materials based on each user's specific needs and language abilities. This would make language learning more accessible and effective for people around the world.",
                                 ""
                             ]
                         }
@@ -65,7 +51,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "{ text: '\\n\\nFunkyToes Wear.' }",
+                                "{ text: '\\n\\nVivid Socks.' }",
                                 ""
                             ]
                         }
@@ -99,43 +85,37 @@
                                 "    \"Your job is to come up with the name of a classic dish from the location that the users suggests.\\n    % USER LOCATION\\n    Rome\\n    YOUR RESPONSE:\"",
                                 "  ]",
                                 "}",
-                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m2:chain:llm_chain\u001b[22m\u001b[39m] [1.02s] Exiting Chain run with output: {",
-                                "  \"text\": \"\\nSpaghetti alla Carbonara\"",
-                                "}",
-                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m4:chain:llm_chain\u001b[22m\u001b[39m] Entering Chain run with input: {",
-                                "  \"dish\": \"\\nSpaghetti alla Carbonara\"",
-                                "}",
                                 "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > 4:chain:llm_chain > \u001b[1m5:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
                                 "  \"prompts\": [",
                                 "    \"Given a dish, give a short and simple recipe on how to make that dish at home.\\n    % DISH\\n    \\nSpaghetti alla Carbonara\\n    YOUR RESPONSE:Suggest a recipe for this \\nSpaghetti alla Carbonara?\"",
                                 "  ]",
                                 "}",
-                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m4:chain:llm_chain\u001b[22m\u001b[39m] [19.96s] Exiting Chain run with output: {",
-                                "  \"text\": \" \\n\\nIngredients: \\n- 1/2 pound spaghetti \\n- 1/4 cup extra-virgin olive oil \\n- 1/2 cup diced onion \\n- 2 cloves garlic, finely minced \\n- 1/2 cup diced pancetta \\n- 2 large eggs, lightly beaten \\n- 1/4 cup freshly grated Parmesan cheese \\n- Salt and freshly ground pepper \\n- 2 tablespoons chopped fresh parsley \\n\\nInstructions: \\n1. Bring a large pot of salted water to a boil. Add the spaghetti and cook until al dente. \\n2. Heat the oil in a large skillet over medium heat. Add the onion and garlic and sauté until tender, about 3 minutes. Add the pancetta and cook until it is lightly browned, about 6 minutes. \\n3. In a separate bowl, whisk together the eggs, Parmesan, salt and pepper. \\n4. Drain the spaghetti and add to the pan with the pancetta. Toss to combine. \\n5. Pour in the egg mixture and toss to coat the spaghetti. Cook until the eggs are cooked and the sauce is lightly thickened, about 2 minutes. \\n6. Sprinkle\"",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m4:chain:llm_chain\u001b[22m\u001b[39m] [24.12s] Exiting Chain run with output: {",
+                                "  \"text\": \"\\n\\nIngredients:\\n- ¾ lbs spaghetti\\n- 4 oz pancetta, diced\\n- 2 cloves garlic, finely chopped\\n- 3 large eggs\\n- 2/3 cup Parmesan cheese, grated\\n- Salt and pepper to taste\\n- 2 tablespoons olive oil\\n\\nInstructions:\\n1. Bring a large pot of salted water to a boil and add spaghetti. Cook according to package instructions. When done, reserve ½ cup of the pasta cooking water before draining.\\n2. Heat olive oil in a large skillet and add the pancetta. Cook for 5 minutes, stirring often.\\n3. Add garlic and cook for another minute.\\n4. In a small bowl, whisk together the eggs, Parmesan cheese, and a pinch of salt and pepper.\\n5. Once the spaghetti is cooked, add it to the skillet and stir.\\n6. Pour the egg mixture over the spaghetti and stir continuously for a few minutes.\\n7. If the spaghetti is too dry, add some of the reserved cooking water and continue stirring until creamy.\\n8. Serve immediately. Enjoy!\"",
                                 "}",
-                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m\u001b[1m1:chain:simple_sequential_chain\u001b[22m\u001b[39m] [20.98s] Exiting Chain run with output: {",
-                                "  \"output\": \" \\n\\nIngredients: \\n- 1/2 pound spaghetti \\n- 1/4 cup extra-virgin olive oil \\n- 1/2 cup diced onion \\n- 2 cloves garlic, finely minced \\n- 1/2 cup diced pancetta \\n- 2 large eggs, lightly beaten \\n- 1/4 cup freshly grated Parmesan cheese \\n- Salt and freshly ground pepper \\n- 2 tablespoons chopped fresh parsley \\n\\nInstructions: \\n1. Bring a large pot of salted water to a boil. Add the spaghetti and cook until al dente. \\n2. Heat the oil in a large skillet over medium heat. Add the onion and garlic and sauté until tender, about 3 minutes. Add the pancetta and cook until it is lightly browned, about 6 minutes. \\n3. In a separate bowl, whisk together the eggs, Parmesan, salt and pepper. \\n4. Drain the spaghetti and add to the pan with the pancetta. Toss to combine. \\n5. Pour in the egg mixture and toss to coat the spaghetti. Cook until the eggs are cooked and the sauce is lightly thickened, about 2 minutes. \\n6. Sprinkle\"",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m\u001b[1m1:chain:simple_sequential_chain\u001b[22m\u001b[39m] [25.02s] Exiting Chain run with output: {",
+                                "  \"output\": \"\\n\\nIngredients:\\n- ¾ lbs spaghetti\\n- 4 oz pancetta, diced\\n- 2 cloves garlic, finely chopped\\n- 3 large eggs\\n- 2/3 cup Parmesan cheese, grated\\n- Salt and pepper to taste\\n- 2 tablespoons olive oil\\n\\nInstructions:\\n1. Bring a large pot of salted water to a boil and add spaghetti. Cook according to package instructions. When done, reserve ½ cup of the pasta cooking water before draining.\\n2. Heat olive oil in a large skillet and add the pancetta. Cook for 5 minutes, stirring often.\\n3. Add garlic and cook for another minute.\\n4. In a small bowl, whisk together the eggs, Parmesan cheese, and a pinch of salt and pepper.\\n5. Once the spaghetti is cooked, add it to the skillet and stir.\\n6. Pour the egg mixture over the spaghetti and stir continuously for a few minutes.\\n7. If the spaghetti is too dry, add some of the reserved cooking water and continue stirring until creamy.\\n8. Serve immediately. Enjoy!\"",
                                 "}",
-                                " ",
                                 "",
-                                "Ingredients: ",
-                                "- 1/2 pound spaghetti ",
-                                "- 1/4 cup extra-virgin olive oil ",
-                                "- 1/2 cup diced onion ",
-                                "- 2 cloves garlic, finely minced ",
-                                "- 1/2 cup diced pancetta ",
-                                "- 2 large eggs, lightly beaten ",
-                                "- 1/4 cup freshly grated Parmesan cheese ",
-                                "- Salt and freshly ground pepper ",
-                                "- 2 tablespoons chopped fresh parsley ",
                                 "",
-                                "Instructions: ",
-                                "1. Bring a large pot of salted water to a boil. Add the spaghetti and cook until al dente. ",
-                                "2. Heat the oil in a large skillet over medium heat. Add the onion and garlic and sauté until tender, about 3 minutes. Add the pancetta and cook until it is lightly browned, about 6 minutes. ",
-                                "3. In a separate bowl, whisk together the eggs, Parmesan, salt and pepper. ",
-                                "4. Drain the spaghetti and add to the pan with the pancetta. Toss to combine. ",
-                                "5. Pour in the egg mixture and toss to coat the spaghetti. Cook until the eggs are cooked and the sauce is lightly thickened, about 2 minutes. ",
-                                "6. Sprinkle",
+                                "Ingredients:",
+                                "- ¾ lbs spaghetti",
+                                "- 4 oz pancetta, diced",
+                                "- 2 cloves garlic, finely chopped",
+                                "- 3 large eggs",
+                                "- 2/3 cup Parmesan cheese, grated",
+                                "- Salt and pepper to taste",
+                                "- 2 tablespoons olive oil",
+                                "",
+                                "Instructions:",
+                                "1. Bring a large pot of salted water to a boil and add spaghetti. Cook according to package instructions. When done, reserve ½ cup of the pasta cooking water before draining.",
+                                "2. Heat olive oil in a large skillet and add the pancetta. Cook for 5 minutes, stirring often.",
+                                "3. Add garlic and cook for another minute.",
+                                "4. In a small bowl, whisk together the eggs, Parmesan cheese, and a pinch of salt and pepper.",
+                                "5. Once the spaghetti is cooked, add it to the skillet and stir.",
+                                "6. Pour the egg mixture over the spaghetti and stir continuously for a few minutes.",
+                                "7. If the spaghetti is too dry, add some of the reserved cooking water and continue stirring until creamy.",
+                                "8. Serve immediately. Enjoy!",
                                 ""
                             ]
                         }
@@ -153,7 +133,7 @@
         {
             "language": "typescript",
             "source": [
-                "import { OpenAI } from \"langchain/llms/openai\";\nimport { loadSummarizationChain } from \"langchain/chains\";\nimport { MarkdownTextSplitter } from \"langchain/text_splitter\";\nimport * as fs from \"fs\";\n\nconst model = new OpenAI({ temperature: 0 });\nconst text = fs.readFileSync(\"data/iterationplan.md\", \"utf8\");\n\nconst textSplitter = new MarkdownTextSplitter({ chunkSize: 1000 });\nconst docs = await textSplitter.createDocuments([text]);\n\nconst chain = loadSummarizationChain(model, { type: \"map_reduce\" });\nconst res = await chain.call({\n    input_documents: docs,\n    verbose: true,\n});\nconsole.log({ res });\n"
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { loadSummarizationChain } from \"langchain/chains\";\nimport { MarkdownTextSplitter } from \"langchain/text_splitter\";\nimport * as fs from \"fs\";\n\nconst model = new OpenAI({ temperature: 0 });\nconst text = fs.readFileSync(\"data/iterationplan.md\", \"utf8\");\n\nconst textSplitter = new MarkdownTextSplitter({ chunkSize: 1000 });\nconst docs = await textSplitter.createDocuments([text]);\nconsole.log(`Number of docs ${docs.length}`)\nconst chain = loadSummarizationChain(model, { type: \"map_reduce\" });\nconst res = await chain.call({\n    input_documents: docs,\n    verbose: true,\n});\nconsole.log({ res });\n"
             ],
             "outputs": [
                 {
@@ -161,9 +141,10 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
+                                "Number of docs 19",
                                 "{",
                                 "  res: {",
-                                "    text: ' This 4-week iteration plan outlines various tasks related to accessibility, user experience, code editor, notebook editor, Python WASM-WASI extension, Source Control, Terminal, testing, API-related tasks, extensions and remote extensions, engineering, and Electron. Additionally, it includes tasks for API proposals and API finalization, as well as a deferred list of tasks.'",
+                                "    text: ' This is a 4-week iteration plan with tasks related to accessibility, UX, code editor, notebook editor, Python WASM-WASI extension, Source Control, Terminal, API-related tasks, extensions, engineering, Electron, and deferred list. These tasks include improving notebook output accessibility, supporting Dev Containers and WSL, exploring support for multiple GitHub accounts, allowing a default profile to be a fallback for settings, extensions, and keyboard shortcuts, supporting ANSI colors in test output, adopting a platform specifier in the path for web extensions, rolling out sandboxing to all users, and more.'",
                                 "  }",
                                 "}",
                                 ""
@@ -285,7 +266,7 @@
         {
             "language": "typescript",
             "source": [
-                "import { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
+                "// This is sample code only, Cell does not run\nimport { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
             ],
             "outputs": []
         },
