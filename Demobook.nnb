@@ -17,7 +17,7 @@
         {
             "language": "typescript",
             "source": [
-                "import * as dotenv from \"dotenv\";\n\nimport { OpenAI } from \"langchain/llms/openai\";\n\ndotenv.config();\n\nconst model = new OpenAI({\n  modelName: \"gpt-3.5-turbo\",\n  openAIApiKey: process.env.OPENAI_API_KEY,\n});\n\nconst res = await model.call(\n  \"What's a good idea for an application to build with GPT-4?\"\n);\n\nconsole.log(res);\n"
+                "import * as dotenv from \"dotenv\";\nimport { OpenAI } from \"langchain/llms/openai\";\n\ndotenv.config();\n\nconst model = new OpenAI({\n  temperature: 0.9,\n  modelName: 'text-davinci-003',\n  openAIApiKey: process.env.OPENAI_API_KEY\n});\nconst res = await model.call(\n  \"What's a good idea for an application to build with GPT-4?\"\n);\nconsole.log(res);"
             ],
             "outputs": [
                 {
@@ -25,7 +25,37 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "As an AI language model, GPT-4 could be used to create a language learning application that incorporates natural language processing and personalized feedback. The application would allow users to input text in the language they are trying to learn, and GPT-4 would analyze the text and provide feedback on grammar, vocabulary, and structure in real time. Additionally, the app could generate personalized language learning materials based on each user's specific needs and language abilities. This would make language learning more accessible and effective for people around the world.",
+                                "",
+                                "",
+                                "How about an application that can generate personalized nutrition plans based on the user's preferences and dietary needs? The application could use GPT-4 to generate meal plans with recipes tailored to the user's preferences, and it could also use GPT-4 to generate grocery lists and reminders to help users stay on track with their nutrition goals.",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "# Azure Open AI\n\n**Reminder** to run the cells you need a `.env` file with the variables:\n```\nOPENAI_API_KEY= __your key__\nAZURE_OPENAI_KEY=__your key__\nAZURE_OPENAI_DEPLOYMENT_NAME=__deploymen name __\nAZURE_OPENAI_INSTANCE_NAME=__instance name__\nAZURE_OPENAI_API_VERSION=2022-12-01\n```"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import * as dotenv from \"dotenv\";\n\nimport { OpenAI } from \"langchain/llms/openai\";\n\ndotenv.config();\n\nconst model = new OpenAI({\n  temperature: 0.9,\n  modelName: 'text-davinci-003',\n  azureOpenAIApiKey: process.env.AZURE_OPENAI_KEY,\n  azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_INSTANCE_NAME,\n  azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_DEPLOYMENT_NAME,\n  azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION\n});\n\nconst res = await model.call(\n  \"What's a good idea for an application to build with GPT-4?\"\n);\n\nconsole.log(res);"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "",
+                                "",
+                                "How about a personal assistant app that uses GPT-4 to suggest ideas and help users with their daily tasks? The app could use GPT-4 to understand the user's requests, suggest ideas, and provide helpful recommendations. The app would be able to learn over time and provide increasingly better suggestions as its AI algorithms gain more data.",
                                 ""
                             ]
                         }
