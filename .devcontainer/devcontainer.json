@@ -8,11 +8,6 @@
 			"extensions": [
 				"donjayamanne.typescript-notebook"
 			]
-		},
-		"codespaces": {
-			"openFiles": [
-				"Demobook.nnb"
-			]
 		}
 	},
 	"postCreateCommand": "npm install"
