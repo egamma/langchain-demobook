@@ -1,6 +1,5 @@
 {
 	"name": "Node.js",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
 	"image": "mcr.microsoft.com/devcontainers/javascript-node:0-18-bullseye",
 	"customizations": {
 		"vscode": {
@@ -11,6 +10,4 @@
 		}
 	},
 	"postCreateCommand": "npm install"
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
 }
