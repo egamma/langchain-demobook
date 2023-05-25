@@ -10,7 +10,7 @@
         {
             "language": "markdown",
             "source": [
-                "# Models\n\nSupports OpenAI, Azure, HuggingFace, and [more](https://js.langchain.com/docs/modules/models/llms/integrations).\n\n**Reminder** to run the cells you need a `.env` file with the variables:\n```\nOPENAI_API_KEY= __your key__\nSERPAPI_API_KEY= __your key__\n```"
+                "# Models\n\nSupports OpenAI, Azure, HuggingFace, and [more](https://js.langchain.com/docs/modules/models/llms/integrations).\n\n**Reminder** to run the cells you need a `.env` file with the variables:\n```\nOPENAI_API_KEY= __your key__\n```"
             ],
             "outputs": []
         },
@@ -43,7 +43,7 @@
         {
             "language": "typescript",
             "source": [
-                "import { OpenAI } from \"langchain/llms/openai\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { LLMChain } from \"langchain/chains\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst model = new OpenAI({ temperature: 0.9 });\n\nconst prompt = new PromptTemplate({\n    template: \"What is a good name for a company that makes {product}?\",\n    inputVariables: [\"product\"],\n});\n\nconst chain = new LLMChain({ llm: model, prompt });\n\nconst res = await chain.call({ product: \"colorful socks\" });\nconsole.log(res);\n"
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { LLMChain } from \"langchain/chains\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst model = new OpenAI({ temperature: 0.9 });\nconst prompt = new PromptTemplate({\n    template: \"What is a good name for a company that makes {product}?\",\n    inputVariables: [\"product\"],\n});\n\nconst chain = new LLMChain({ llm: model, prompt });\nconst res = await chain.call({ product: \"colorful socks\" });\nconsole.log(res);"
             ],
             "outputs": [
                 {
@@ -62,14 +62,14 @@
         {
             "language": "markdown",
             "source": [
-                "# Sequential Chains\n\nPrompt1 -> LLM -> Prompt2 -> LLM"
+                "# Summarization Chain\n\nLangChain provides Chains for particular scenarios. These Chains define the required prompts and handle the prompt engineering (the prompts can be customized if needed).\n\nExample: Summarize the iteration plan.\n"
             ],
             "outputs": []
         },
         {
             "language": "typescript",
             "source": [
-                "import { OpenAI } from \"langchain/llms/openai\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { LLMChain, SimpleSequentialChain } from \"langchain/chains\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst model = new OpenAI({ temperature: 0.9 });\n\nconst dishPrompt = new PromptTemplate({\n    template: `Your job is to come up with the name of a classic dish from the location that the users suggests.\n    % USER LOCATION\n    {location}\n    YOUR RESPONSE:`,\n    inputVariables: [\"location\"],\n});\n\nconst recipePrompt = new PromptTemplate({\n    template: `Given a dish, give a short and simple recipe on how to make that dish at home.\n    % DISH\n    {dish}\n    YOUR RESPONSE:Suggest a recipe for this {dish}?`,\n    inputVariables: [\"dish\"],\n});\n\nconst dishChain = new LLMChain({ llm: model, prompt: dishPrompt });\nconst recipeChain = new LLMChain({ llm: model, prompt: recipePrompt });\n\nconst overallChain = new SimpleSequentialChain({\n    chains: [dishChain, recipeChain],\n    verbose: true,\n});\nconst res = await overallChain.run(\"Rome\");\nconsole.log(res);\n"
+                "import { OpenAI } from \"langchain/llms/openai\";\nimport { loadSummarizationChain } from \"langchain/chains\";\nimport { MarkdownTextSplitter } from \"langchain/text_splitter\";\nimport * as fs from \"fs\";\n\nconst model = new OpenAI({ temperature: 0 });\nconst text = fs.readFileSync(\"data/iterationplan.md\", \"utf8\");\n\nconst textSplitter = new MarkdownTextSplitter({ chunkSize: 1000 });\nconst docs = await textSplitter.createDocuments([text]);\nconsole.log(`Number of documents: ${docs.length}`);\n\nconst chain = loadSummarizationChain(model, { type: \"map_reduce\" });\nconst res = await chain.call({\n    input_documents: docs,\n    verbose: true,\n});\nconsole.log({ res });"
             ],
             "outputs": [
                 {
@@ -77,74 +77,10 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m\u001b[1m1:chain:simple_sequential_chain\u001b[22m\u001b[39m] Entering Chain run with input: {",
-                                "  \"input\": \"Rome\"",
-                                "}",
-                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > 2:chain:llm_chain > \u001b[1m3:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
-                                "  \"prompts\": [",
-                                "    \"Your job is to come up with the name of a classic dish from the location that the users suggests.\\n    % USER LOCATION\\n    Rome\\n    YOUR RESPONSE:\"",
-                                "  ]",
-                                "}",
-                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > 4:chain:llm_chain > \u001b[1m5:llm:openai\u001b[22m\u001b[39m] Entering LLM run with input: {",
-                                "  \"prompts\": [",
-                                "    \"Given a dish, give a short and simple recipe on how to make that dish at home.\\n    % DISH\\n    \\nSpaghetti alla Carbonara\\n    YOUR RESPONSE:Suggest a recipe for this \\nSpaghetti alla Carbonara?\"",
-                                "  ]",
-                                "}",
-                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m1:chain:simple_sequential_chain > \u001b[1m4:chain:llm_chain\u001b[22m\u001b[39m] [24.12s] Exiting Chain run with output: {",
-                                "  \"text\": \"\\n\\nIngredients:\\n- ¾ lbs spaghetti\\n- 4 oz pancetta, diced\\n- 2 cloves garlic, finely chopped\\n- 3 large eggs\\n- 2/3 cup Parmesan cheese, grated\\n- Salt and pepper to taste\\n- 2 tablespoons olive oil\\n\\nInstructions:\\n1. Bring a large pot of salted water to a boil and add spaghetti. Cook according to package instructions. When done, reserve ½ cup of the pasta cooking water before draining.\\n2. Heat olive oil in a large skillet and add the pancetta. Cook for 5 minutes, stirring often.\\n3. Add garlic and cook for another minute.\\n4. In a small bowl, whisk together the eggs, Parmesan cheese, and a pinch of salt and pepper.\\n5. Once the spaghetti is cooked, add it to the skillet and stir.\\n6. Pour the egg mixture over the spaghetti and stir continuously for a few minutes.\\n7. If the spaghetti is too dry, add some of the reserved cooking water and continue stirring until creamy.\\n8. Serve immediately. Enjoy!\"",
-                                "}",
-                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m\u001b[1m1:chain:simple_sequential_chain\u001b[22m\u001b[39m] [25.02s] Exiting Chain run with output: {",
-                                "  \"output\": \"\\n\\nIngredients:\\n- ¾ lbs spaghetti\\n- 4 oz pancetta, diced\\n- 2 cloves garlic, finely chopped\\n- 3 large eggs\\n- 2/3 cup Parmesan cheese, grated\\n- Salt and pepper to taste\\n- 2 tablespoons olive oil\\n\\nInstructions:\\n1. Bring a large pot of salted water to a boil and add spaghetti. Cook according to package instructions. When done, reserve ½ cup of the pasta cooking water before draining.\\n2. Heat olive oil in a large skillet and add the pancetta. Cook for 5 minutes, stirring often.\\n3. Add garlic and cook for another minute.\\n4. In a small bowl, whisk together the eggs, Parmesan cheese, and a pinch of salt and pepper.\\n5. Once the spaghetti is cooked, add it to the skillet and stir.\\n6. Pour the egg mixture over the spaghetti and stir continuously for a few minutes.\\n7. If the spaghetti is too dry, add some of the reserved cooking water and continue stirring until creamy.\\n8. Serve immediately. Enjoy!\"",
-                                "}",
-                                "",
-                                "",
-                                "Ingredients:",
-                                "- ¾ lbs spaghetti",
-                                "- 4 oz pancetta, diced",
-                                "- 2 cloves garlic, finely chopped",
-                                "- 3 large eggs",
-                                "- 2/3 cup Parmesan cheese, grated",
-                                "- Salt and pepper to taste",
-                                "- 2 tablespoons olive oil",
-                                "",
-                                "Instructions:",
-                                "1. Bring a large pot of salted water to a boil and add spaghetti. Cook according to package instructions. When done, reserve ½ cup of the pasta cooking water before draining.",
-                                "2. Heat olive oil in a large skillet and add the pancetta. Cook for 5 minutes, stirring often.",
-                                "3. Add garlic and cook for another minute.",
-                                "4. In a small bowl, whisk together the eggs, Parmesan cheese, and a pinch of salt and pepper.",
-                                "5. Once the spaghetti is cooked, add it to the skillet and stir.",
-                                "6. Pour the egg mixture over the spaghetti and stir continuously for a few minutes.",
-                                "7. If the spaghetti is too dry, add some of the reserved cooking water and continue stirring until creamy.",
-                                "8. Serve immediately. Enjoy!",
-                                ""
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "language": "markdown",
-            "source": [
-                "# Summarization Chain\n\nChain comes with prompts. \nExample: Summarize the iteration plan.\n"
-            ],
-            "outputs": []
-        },
-        {
-            "language": "typescript",
-            "source": [
-                "import { OpenAI } from \"langchain/llms/openai\";\nimport { loadSummarizationChain } from \"langchain/chains\";\nimport { MarkdownTextSplitter } from \"langchain/text_splitter\";\nimport * as fs from \"fs\";\n\nconst model = new OpenAI({ temperature: 0 });\nconst text = fs.readFileSync(\"data/iterationplan.md\", \"utf8\");\n\nconst textSplitter = new MarkdownTextSplitter({ chunkSize: 1000 });\nconst docs = await textSplitter.createDocuments([text]);\nconsole.log(`Number of docs ${docs.length}`)\nconst chain = loadSummarizationChain(model, { type: \"map_reduce\" });\nconst res = await chain.call({\n    input_documents: docs,\n    verbose: true,\n});\nconsole.log({ res });\n"
-            ],
-            "outputs": [
-                {
-                    "items": [
-                        {
-                            "mime": "application/vnd.code.notebook.stdout",
-                            "value": [
-                                "Number of docs 19",
+                                "Number of documents: 19",
                                 "{",
                                 "  res: {",
-                                "    text: ' This is a 4-week iteration plan with tasks related to accessibility, UX, code editor, notebook editor, Python WASM-WASI extension, Source Control, Terminal, API-related tasks, extensions, engineering, Electron, and deferred list. These tasks include improving notebook output accessibility, supporting Dev Containers and WSL, exploring support for multiple GitHub accounts, allowing a default profile to be a fallback for settings, extensions, and keyboard shortcuts, supporting ANSI colors in test output, adopting a platform specifier in the path for web extensions, rolling out sandboxing to all users, and more.'",
+                                "    text: ' This is a list of tasks for the Visual Studio Code development team, including accessibility, user experience, code editor, notebook editor, Python WASM-WASI extension, Source Control, Terminal, API-related tasks, extensions, engineering, Electron, and deferred tasks. These tasks are aimed at improving the user experience and accessibility of VSCode.'",
                                 "  }",
                                 "}",
                                 ""
@@ -157,7 +93,14 @@
         {
             "language": "markdown",
             "source": [
-                "# Agents\n\nAn Agent is given a set of `tools` and prompts the language model for deciding the actions to perform to complete a `task`\n\n## Tools\n\n```js\ninterface Tool {\n  call(arg: string): Promise<string>; // performs the action\n\n  name: string;\n\n  description: string;  // describes the tool to the LLM model\n}\n```\n\n### Tools available out of the box\n\n- Web requests (GET/POST)\n- Web Search (google/Bing)\n- read/write local files\n\nMore tools: https://js.langchain.com/docs/modules/agents/tools/integrations/\n\nTools can be easily be extended.\n\n### Agents\n\nAn agent is configured with an LLM model and a list of Tools and then asked to complete a task with these tools.\n\n**ReAct** style ‘Action Agents’ are supported by LangChain. The model is asked to think about what action to take, then take it:\n\n1. User gives an agent a **task**\n2. **Thought**: The agent “thinks” about what to do\n3. **Action/Action Input**: The agent decides what action to take (aka what tool to use) and what the input to that tool should be\n4. **Observation**: The output of the tool\n\nRepeat steps 2-4 until the Agent “thinks” it is done\n\nThought includes reasoning about a mistake and correcting it.\n\nPapers\n- Intro paper: https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html\n- Research paper: https://arxiv.org/pdf/2210.03629.pdf\n\n`Zero-Shot-Agent`: Prompts constructed based on the tool description only\n\n\nAgents. Concept https://docs.langchain.com/docs/components/agents/\n "
+                "# Agents\n\nAn Agent is given a set of `tools` and prompts the LLM for deciding the actions to perform to complete a `task`\n\n## Tools\n\n```js\ninterface Tool {\n  call(arg: string): Promise<string>; // performs the action\n\n  name: string;\n  description: string;  // describes the tool to the LLM model\n}\n```\n\n### Several Tools are available out of the box\n\n- Web requests (GET/POST)\n- Web Search (google/Bing)\n- read/write local files\n\nMore tools: https://js.langchain.com/docs/modules/agents/tools/integrations/\n\nTools can be easily be extended.\n\n### Agents\n\nAn agent is configured with an LLM model and a list of Tools and then asked to complete a task with these tools.\n\n**ReAct** style ‘Action Agents’ are supported by LangChain. The model is asked to think about what action to take, then take it:\n\n1. User gives an agent a **task**\n2. **Thought**: The agent “thinks” about what to do\n3. **Action/Action Input**: The agent decides what action to take (aka what tool to use) and what the input to that tool should be\n4. **Observation**: The output of the tool\n\nRepeat steps 2-4 until the Agent “thinks” it is done\n\nThoughts includes reasoning about a mistake and the agent can a false step.\n\nPapers\n- Intro paper: https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html\n- Research paper: https://arxiv.org/pdf/2210.03629.pdf\n\n`Zero-Shot-Agent`: Prompts are constructed based on the tool description only\n\nAgents. Concept https://docs.langchain.com/docs/components/agents/"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "For this example a `SERP_API_KEY` is required in the `.env` file:\n```\nOPENAI_API_KEY= __your key__\nSERPAPI_API_KEY= __your key__\n```"
             ],
             "outputs": []
         },
@@ -252,7 +195,7 @@
         {
             "language": "typescript",
             "source": [
-                "import { LLMChain } from \"langchain\";\nimport { BaseLLM } from \"langchain/llms/base\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { Tool } from \"langchain/tools\";\n\nexport class PromptTool extends Tool {\n  model: BaseLLM;\n  prompt: string;\n  name: string;\n  description: string;\n\n  constructor(model: BaseLLM, name: string, description: string, prompt: string) {\n    super();\n    this.name = name;\n    this.description = description;\n    this.prompt = prompt;\n    this.model = model;\n  }\n\n  async _call(input: string): Promise<string> {\n    const prompt = new PromptTemplate({\n      template: this.prompt,\n      inputVariables: [\"input\"],\n    });\n    const chain = new LLMChain({ llm: this.model, prompt });\n    const res = await chain.call({ input });\n    return res.output;\n  }\n}\n\n// Example usage\nconst promptTool = new PromptTool(llm,\n    'translateToGerman',\n    'A tool to translate the given input to German. The input should be a string to be translated to German',\n    'Translate the given {input} to German'\n    );"
+                "import { LLMChain } from \"langchain/chains\";\nimport { BaseLLM } from \"langchain/llms/base\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { Tool } from \"langchain/tools\";\n\nexport class PromptTool extends Tool {\n  model: BaseLLM;\n  prompt: string;\n  name: string;\n  description: string;\n\n  constructor(model: BaseLLM, name: string, description: string, prompt: string) {\n    super();\n    this.name = name;\n    this.description = description;\n    this.prompt = prompt;\n    this.model = model;\n  }\n\n  async _call(input: string): Promise<string> {\n    const prompt = new PromptTemplate({\n      template: this.prompt,\n      inputVariables: [\"input\"],\n    });\n    const chain = new LLMChain({ llm: this.model, prompt });\n    const res = await chain.call({ input: input });\n    return res.output;\n  }\n}\n\n// Example usage\nconst promptTool = new PromptTool(llm,\n    'translateToGerman',\n    'A tool to translate the given input to German. The input should be a string to be translated to German',\n    'Translate the given {input} to German'\n    );"
             ],
             "outputs": []
         },
@@ -266,7 +209,7 @@
         {
             "language": "typescript",
             "source": [
-                "// This is sample code only, Cell does not run\nimport { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
+                "// WriteFileTool from LangChain\n\nimport { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
             ],
             "outputs": []
         },
@@ -280,7 +223,7 @@
         {
             "language": "typescript",
             "source": [
-                "import { z } from \"zod\";\nimport { readFileSync } from \"fs\";\n\nconst userSchema = z.object({\n    id: z.number().min(0),\n    firstName: z.string(),\n    lastName: z.string(),\n});\n\ntype User = z.infer<typeof userSchema>;\n\n//{\n//     \"id\": 1234567890,\n//     \"firstName\": \"Joe\",\n//     \"lastName\": \"Smith\"\n// }\nconst okData = JSON.parse(readFileSync(\"data/user-ok.json\", \"utf-8\"));\n\n// {\n//     \"id\": 1234567890,\n//     \"firstname\": \"Joe\",\n//     \"lastName\": \"Smith\"\n// }\nconst nokData = JSON.parse(readFileSync(\"data/user-nok.json\", \"utf-8\"));\n\nif (userSchema.safeParse(okData).success) {\n    console.log(\"okData is correct\")\n} else {\n    console.log(\"okData is incorrect\")\n};\n\nif (userSchema.safeParse(nokData).success) {\n    console.log(\"`nokData is correct\")\n} else {\n    console.log(\"nokData is incorrect\")\n};"
+                "import { z } from \"zod\";\n\nconst userSchema = z.object({\n    id: z.number().min(0),\n    firstName: z.string(),\n    lastName: z.string(),\n});\n\ntype User = z.infer<typeof userSchema>;\n\nconst data = JSON.parse('{\"id\": -1,\"firstName\": \"Joe\",\"lastName\": \"Smith\"}');\n\nif (userSchema.safeParse(data).success) {\n    console.log(\"data is correct\")\n} else {\n    console.log(\"data is incorrect\")\n};"
             ],
             "outputs": [
                 {
@@ -288,8 +231,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "okData is correct",
-                                "nokData is incorrect",
+                                "data is incorrect",
                                 ""
                             ]
                         }
@@ -300,7 +242,7 @@
         {
             "language": "markdown",
             "source": [
-                "# ChatGPT Plugin\n\nA ChatGPT Plugin is just another **Tool**.\nThe ChatGPT Plugin calls web endpoints, therefore the Tools for making web calls `RequestGetTool` and `RequestPostTool` are inlcuded."
+                "# ChatGPT Plugin\n\nA ChatGPT Plugin is can be adapted to act as a **Tool**. This is done by the `AIPluginTool`. The `AIPluginTool` fetches the tool description from the manifest file of the ChatGPT Plugin.\n\nSince the ChatGPT Plugin must call web endpoints following the OpenAI spec, the Tools for making web calls `RequestGetTool` and `RequestPostTool` are inlcuded in the example below."
             ],
             "outputs": []
         },
