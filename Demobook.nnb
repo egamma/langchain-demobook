@@ -38,7 +38,7 @@
         {
             "language": "markdown",
             "source": [
-                "# Azure Open AI\n\n**Reminder** to run the cells you need a `.env` file with the variables:\n```\nOPENAI_API_KEY= __your key__\nAZURE_OPENAI_KEY=__your key__\nAZURE_OPENAI_DEPLOYMENT_NAME=__deploymen name __\nAZURE_OPENAI_INSTANCE_NAME=__instance name__\nAZURE_OPENAI_API_VERSION=2022-12-01\n```"
+                "# Azure Open AI\n\n**Reminder** to run the cells you need a `.env` file with the variables:\n\nAzure deployment: https://langchain-demo.openai.azure.com/openai/deployments/demo/completions?api-version=2022-12-01\n```\nOPENAI_API_KEY= __your key__\nAZURE_OPENAI_KEY=__your key__\nAZURE_OPENAI_DEPLOYMENT_NAME=__deployment name __  demo\nAZURE_OPENAI_INSTANCE_NAME=__instance name__ langchain-demo\nAZURE_OPENAI_API_VERSION=2022-12-01\n```"
             ],
             "outputs": []
         },
