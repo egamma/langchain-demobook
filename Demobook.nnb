@@ -3,7 +3,7 @@
         {
             "language": "markdown",
             "source": [
-                "# LangChain Demo Book\n\n## What is langchain?\n\n- A library to implement applications using LLMs\n- Supports Python and TS (npm install langchain)\n\n### Components\n\n- Wrappers for LLM models (OpenAI, AzureAI, HuggingFace, …)\n- Prompt templates\n- Documents, TextSplitters, Embeddings and VectorStores\n\n### Chains\n\n- Assembles components, e.g. LLM model, pattern template\n- SequentialChains\n- Chains + Prompt engineering\n  - SummarizationChain – summarize a document\n  - RetrievalQAChain  –  answer question for indexed documents \n\n### Agents & Tools\n\nSee below\n\n## Documentation\n- Concepts https://docs.langchain.com/docs/\n- Python https://python.langchain.com/en/latest/\n- TypeScript https://js.langchain.com/docs/\n\n\n"
+                "# LangChain Demo Book\n\n## What is langchain?\n\n- A library to implement applications using LLMs\n- Supports Python and TS (npm install langchain)\n\n### Components\n\n- Wrappers for LLM models (OpenAI, AzureAI, HuggingFace, …)\n- Prompt templates\n- Documents, TextSplitters, Embeddings and VectorStores\n\n### Chains\n\n- Assembles components, e.g. LLM model, pattern template\n- Chains + Prompt engineering\n  - SummarizationChain – summarize a document\n  - RetrievalQAChain  –  answer question for indexed documents \n\n### Agents & Tools\n\nSee below\n\n## Documentation\n- Concepts https://docs.langchain.com/docs/\n- Python https://python.langchain.com/en/latest/\n- TypeScript https://js.langchain.com/docs/\n\n\n"
             ],
             "outputs": []
         },
@@ -15,7 +15,7 @@
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "javascript",
             "source": [
                 "import * as dotenv from \"dotenv\";\nimport { OpenAI } from \"langchain/llms/openai\";\n\ndotenv.config();\n\nconst model = new OpenAI({\n  temperature: 0.9,\n  modelName: 'text-davinci-003',\n  openAIApiKey: process.env.OPENAI_API_KEY\n});\nconst res = await model.call(\n  \"What's a good idea for an application to build with GPT-4?\"\n);\nconsole.log(res);"
             ],
@@ -27,7 +27,7 @@
                             "value": [
                                 "",
                                 "",
-                                "How about an application that can generate personalized nutrition plans based on the user's preferences and dietary needs? The application could use GPT-4 to generate meal plans with recipes tailored to the user's preferences, and it could also use GPT-4 to generate grocery lists and reminders to help users stay on track with their nutrition goals.",
+                                "An application to generate legal documents, such as contracts, leases, and wills, based on user input. The application could use the GPT-4 language model to generate accurate and legally-binding documents. It could also be used to generate legal advice and opinions on specific topics.",
                                 ""
                             ]
                         }
@@ -43,7 +43,7 @@
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "javascript",
             "source": [
                 "import * as dotenv from \"dotenv\";\n\nimport { OpenAI } from \"langchain/llms/openai\";\n\ndotenv.config();\n\nconst model = new OpenAI({\n  temperature: 0.9,\n  modelName: 'text-davinci-003',\n  azureOpenAIApiKey: process.env.AZURE_OPENAI_KEY,\n  azureOpenAIApiInstanceName: process.env.AZURE_OPENAI_INSTANCE_NAME,\n  azureOpenAIApiDeploymentName: process.env.AZURE_OPENAI_DEPLOYMENT_NAME,\n  azureOpenAIApiVersion: process.env.AZURE_OPENAI_API_VERSION\n});\n\nconst res = await model.call(\n  \"What's a good idea for an application to build with GPT-4?\"\n);\n\nconsole.log(res);"
             ],
@@ -71,7 +71,7 @@
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "javascript",
             "source": [
                 "import { OpenAI } from \"langchain/llms/openai\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { LLMChain } from \"langchain/chains\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst model = new OpenAI({ temperature: 0.9 });\nconst prompt = new PromptTemplate({\n    template: \"What is a good name for a company that makes {product}?\",\n    inputVariables: [\"product\"],\n});\n\nconst chain = new LLMChain({ llm: model, prompt });\nconst res = await chain.call({ product: \"colorful socks\" });\nconsole.log(res);"
             ],
@@ -81,7 +81,7 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "{ text: '\\n\\nVivid Socks.' }",
+                                "{ text: '\\n\\nSock Spectacular.' }",
                                 ""
                             ]
                         }
@@ -97,7 +97,7 @@
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "javascript",
             "source": [
                 "import { OpenAI } from \"langchain/llms/openai\";\nimport { loadSummarizationChain } from \"langchain/chains\";\nimport { MarkdownTextSplitter } from \"langchain/text_splitter\";\nimport * as fs from \"fs\";\n\nconst model = new OpenAI({ temperature: 0 });\nconst text = fs.readFileSync(\"data/iterationplan.md\", \"utf8\");\n\nconst textSplitter = new MarkdownTextSplitter({ chunkSize: 1000 });\nconst docs = await textSplitter.createDocuments([text]);\nconsole.log(`Number of documents: ${docs.length}`);\n\nconst chain = loadSummarizationChain(model, { type: \"map_reduce\" });\nconst res = await chain.call({\n    input_documents: docs,\n    verbose: true,\n});\nconsole.log({ res });"
             ],
@@ -107,10 +107,10 @@
                         {
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
-                                "Number of documents: 19",
+                                "Number of documents: 20",
                                 "{",
                                 "  res: {",
-                                "    text: ' This is a list of tasks for the Visual Studio Code development team, including accessibility, user experience, code editor, notebook editor, Python WASM-WASI extension, Source Control, Terminal, API-related tasks, extensions, engineering, Electron, and deferred tasks. These tasks are aimed at improving the user experience and accessibility of VSCode.'",
+                                "    text: ' This is a list of tasks related to the Visual Studio Code project, including accessibility, Dev Containers, WSL, Code Editor, Notebook Editor, Python WASM-WASI extension, source control and terminal, testing, vscode.dev, API-related tasks, proposed extensions, engineering and Electron tasks, and deferred tasks. Additionally, the issue proposes changes to the editor and suggests surfacing Dependabot alerts in the workbench.'",
                                 "  }",
                                 "}",
                                 ""
@@ -123,7 +123,21 @@
         {
             "language": "markdown",
             "source": [
-                "# Agents\n\nAn Agent is given a set of `tools` and prompts the LLM for deciding the actions to perform to complete a `task`\n\n## Tools\n\n```js\ninterface Tool {\n  call(arg: string): Promise<string>; // performs the action\n\n  name: string;\n  description: string;  // describes the tool to the LLM model\n}\n```\n\n### Several Tools are available out of the box\n\n- Web requests (GET/POST)\n- Web Search (google/Bing)\n- read/write local files\n\nMore tools: https://js.langchain.com/docs/modules/agents/tools/integrations/\n\nTools can be easily be extended.\n\n### Agents\n\nAn agent is configured with an LLM model and a list of Tools and then asked to complete a task with these tools.\n\n**ReAct** style ‘Action Agents’ are supported by LangChain. The model is asked to think about what action to take, then take it:\n\n1. User gives an agent a **task**\n2. **Thought**: The agent “thinks” about what to do\n3. **Action/Action Input**: The agent decides what action to take (aka what tool to use) and what the input to that tool should be\n4. **Observation**: The output of the tool\n\nRepeat steps 2-4 until the Agent “thinks” it is done\n\nThoughts includes reasoning about a mistake and the agent can a false step.\n\nPapers\n- Intro paper: https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html\n- Research paper: https://arxiv.org/pdf/2210.03629.pdf\n\n`Zero-Shot-Agent`: Prompts are constructed based on the tool description only\n\nAgents. Concept https://docs.langchain.com/docs/components/agents/"
+                "# Agents\n\nAn Agent is given a set of `tools` and prompts the LLM for deciding the actions to perform to complete a `task`\n\nApplications/Libraries use different terms:\n\n<img src=\"Terminology.png\" width=\"600\" >\n\n## Tools\n\n```js\ninterface Tool {\n  call(arg: string): Promise<string>; // performs the action\n\n  name: string;\n  description: string;  // describes the tool to the LLM model\n}\n```\n\n### Several Tools are available out of the box\n\n- Web requests (GET/POST)\n- Web Search (google/Bing)\n- read/write local files\n\nMore tools: https://js.langchain.com/docs/modules/agents/tools/integrations/\n\nTools can be easily be extended.\n\n### Agents\n\nAn agent is \n- configured with an LLM model\n- a list of Tools.\n- a prompt with the task to complete\n"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "\n**ReAct** The model is asked to think about what action to take, then take it. Intro paper: https://ai.googleblog.com/2022/11/react-synergizing-reasoning-and-acting.html\n\n1. User gives an agent a **task**\n2. **Thought**: The agent “thinks” about what to do\n3. **Action/Action Input**: The agent decides what action to take (aka what tool to use) and what the input to that tool should be\n4. **Observation**: The output of the tool\n\nRepeat steps 2-4 until the Agent “thinks” it is done\n\n### React Prompt example:"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
+            "source": [
+                "`Use the following format in your response:\n\nQuestion: the input question you must answer\nThought: you should always think about what to do\nAction: the action to take, should be one of [{tool_names}]\nAction Input: the input to the action\nObservation: the result of the action\n... (this Thought/Action/Action Input/Observation can repeat N times)\nThought: I now know the final answer\nFinal Answer: the final answer to the original input question`;\n\n`Begin!\n\nQuestion: {input}\nThought:{agent_scratchpad}`;"
             ],
             "outputs": []
         },
@@ -135,7 +149,7 @@
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "javascript",
             "source": [
                 "import { OpenAI } from \"langchain/llms/openai\";\nimport { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport { SerpAPI } from \"langchain/tools\";\nimport { Calculator } from \"langchain/tools/calculator\";\nimport * as dotenv from \"dotenv\";\n\ndotenv.config();\n\nconst llm = new OpenAI({\n    modelName: \"text-davinci-003\",\n    temperature: 0\n});\nconst tools = [\n  new SerpAPI(), // Google search API\n  new Calculator() // Parse and evaluate math expressions\n];\nconst agent = await initializeAgentExecutorWithOptions(\n  tools,\n  llm, {\n  agentType: \"zero-shot-react-description\",\n  verbose: true\n}\n);\nconst result = await agent.call({\n  input: \"Who is Olivia Wilde's boyfriend? What is his current age raised to the 0.23 power?\",\n});\nconsole.log({ result });"
             ],
@@ -179,12 +193,26 @@
         {
             "language": "markdown",
             "source": [
-                "# Agents with Custom Tools\n\nYou can extend the set of Tools easily. Adding a simple `HelloWorldTool`."
+                "**Note**: Show the 'Single Action Agent LLM Tool Interaction slide.'"
             ],
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "markdown",
+            "source": [
+                "# Custom Tools\n\nYou can extend the set of Tools easily. Adding a simple `HelloWorldTool`."
+            ],
+            "outputs": []
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "```TypeScript\nimport { Tool } from \"langchain/tools\";\nimport { OpenAI } from \"langchain/llms/openai\";\nimport * as dotenv from \"dotenv\";\nimport { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport { SerpAPI } from \"langchain/tools\";\n\n\ndotenv.config();\n\nclass HelloTool extends Tool {\n    constructor(\n    ) {\n        super();\n    }\n\n    name = \"helloworld\";\n\n    async _call(input: string) {\n        return \"Hello world!\";\n    }\n\n    description =\n        \"A tool that can write hello world.\";\n}\n\nconst llm = new OpenAI({\n        modelName: \"text-davinci-003\",\n        temperature: 0\n});\n\nconst tools = [\n    new SerpAPI(),\n    new HelloTool()\n];\n\nconst agent = await initializeAgentExecutorWithOptions(\n    tools,\n    llm,\n    {\n        agentType: \"zero-shot-react-description\",\n        verbose: true\n    }\n);\n\nconst result = await agent.call({\n    input: \"I need to write hello world?\",\n});\n\nconsole.log({ result });\n```"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "javascript",
             "source": [
                 "import { Tool } from \"langchain/tools\";\nimport { OpenAI } from \"langchain/llms/openai\";\nimport * as dotenv from \"dotenv\";\nimport { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport { SerpAPI } from \"langchain/tools\";\n\n\ndotenv.config();\n\nclass HelloTool extends Tool {\n    constructor(\n    ) {\n        super();\n    }\n\n    name = \"helloworld\";\n\n    async _call(input: string) {\n        return \"Hello world!\";\n    }\n\n    description =\n        \"A tool that can write hello world.\";\n}\n\nconst llm = new OpenAI({\n        modelName: \"text-davinci-003\",\n        temperature: 0\n});\n\nconst tools = [\n    new SerpAPI(),\n    new HelloTool()\n];\n\nconst agent = await initializeAgentExecutorWithOptions(\n    tools,\n    llm,\n    {\n        agentType: \"zero-shot-react-description\",\n        verbose: true\n    }\n);\n\nconst result = await agent.call({\n    input: \"I need to write hello world?\",\n});\n\nconsole.log({ result });\n"
             ],
@@ -223,9 +251,9 @@
             "outputs": []
         },
         {
-            "language": "typescript",
+            "language": "javascript",
             "source": [
-                "import { LLMChain } from \"langchain/chains\";\nimport { BaseLLM } from \"langchain/llms/base\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { Tool } from \"langchain/tools\";\n\nexport class PromptTool extends Tool {\n  model: BaseLLM;\n  prompt: string;\n  name: string;\n  description: string;\n\n  constructor(model: BaseLLM, name: string, description: string, prompt: string) {\n    super();\n    this.name = name;\n    this.description = description;\n    this.prompt = prompt;\n    this.model = model;\n  }\n\n  async _call(input: string): Promise<string> {\n    const prompt = new PromptTemplate({\n      template: this.prompt,\n      inputVariables: [\"input\"],\n    });\n    const chain = new LLMChain({ llm: this.model, prompt });\n    const res = await chain.call({ input: input });\n    return res.output;\n  }\n}\n\n// Example usage\nconst promptTool = new PromptTool(llm,\n    'translateToGerman',\n    'A tool to translate the given input to German. The input should be a string to be translated to German',\n    'Translate the given {input} to German'\n    );"
+                "// Example only does not run\n\nimport { LLMChain } from \"langchain/chains\";\nimport { BaseLLM } from \"langchain/llms/base\";\nimport { PromptTemplate } from \"langchain/prompts\";\nimport { Tool } from \"langchain/tools\";\n\nexport class PromptTool extends Tool {\n  model: BaseLLM;\n  prompt: string;\n  name: string;\n  description: string;\n\n  constructor(model: BaseLLM, name: string, description: string, prompt: string) {\n    super();\n    this.name = name;\n    this.description = description;\n    this.prompt = prompt;\n    this.model = model;\n  }\n\n  async _call(input: string): Promise<string> {\n    const prompt = new PromptTemplate({\n      template: this.prompt,\n      inputVariables: [\"input\"],\n    });\n    const chain = new LLMChain({ llm: this.model, prompt });\n    const res = await chain.call({ input: input });\n    return res.output;\n  }\n}\n\n// Example usage\nconst promptTool = new PromptTool(llm,\n    'translateToGerman',\n    'A tool to translate the given input to German. The input should be a string to be translated to German',\n    'Translate the given {input} to German'\n    );"
             ],
             "outputs": []
         },
@@ -239,7 +267,7 @@
         {
             "language": "typescript",
             "source": [
-                "// WriteFileTool from LangChain\n\nimport { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
+                "// WriteFileTool from LangChain. **Cell does not run**\n\nimport { z } from \"zod\";\nimport { BaseFileStore } from \"../schema/index.js\";\nimport { StructuredTool, ToolParams } from \"./base.js\";\n\nexport class WriteFileTool extends StructuredTool {\n    schema = z.object({\n      file_path: z.string().describe(\"name of file\"),\n      text: z.string().describe(\"text to write to file\"),\n    });\n  \n    name = \"write_file\";\n  \n    description = \"Write file from disk\";\n  \n    store: BaseFileStore;\n  \n    constructor({ store, ...rest }: WriteFileParams) {\n      super(rest);\n      this.store = store;\n    }\n  \n    async _call({ file_path, text }: z.infer<typeof this.schema>) {\n      await this.store.writeFile(file_path, text);\n      return \"File written to successfully.\";\n    }\n  }"
             ],
             "outputs": []
         },
