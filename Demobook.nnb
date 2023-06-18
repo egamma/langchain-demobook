@@ -27,7 +27,7 @@
                             "value": [
                                 "",
                                 "",
-                                "An application to generate legal documents, such as contracts, leases, and wills, based on user input. The application could use the GPT-4 language model to generate accurate and legally-binding documents. It could also be used to generate legal advice and opinions on specific topics.",
+                                "How about an application that uses GPT-4 to generate personalized image captions for photos? It would use the GPT-4 model to generate captions based on each photo, allowing users to quickly share their photos with unique, witty captions.",
                                 ""
                             ]
                         }
@@ -290,6 +290,99 @@
                             "mime": "application/vnd.code.notebook.stdout",
                             "value": [
                                 "data is incorrect",
+                                ""
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "language": "markdown",
+            "source": [
+                "## OpenAI Functions"
+            ],
+            "outputs": []
+        },
+        {
+            "language": "typescript",
+            "source": [
+                "import { initializeAgentExecutorWithOptions } from \"langchain/agents\";\nimport { ChatOpenAI } from \"langchain/chat_models/openai\";\nimport { SerpAPI } from \"langchain/tools\";\nimport { Calculator } from \"langchain/tools/calculator\";\n\nconst executor = await initializeAgentExecutorWithOptions(\n  [new Calculator(), new SerpAPI()],\n  new ChatOpenAI({ modelName: \"gpt-4-0613\", temperature: 0 }),\n  {\n    agentType: \"openai-functions\",\n    verbose: true,\n  }\n);\n\nconst result = await executor.run(\"What is the weather in New York?\");"
+            ],
+            "outputs": [
+                {
+                    "items": [
+                        {
+                            "mime": "application/vnd.code.notebook.stdout",
+                            "value": [
+                                "\u001b[32m[chain/start]\u001b[39m [\u001b[90m\u001b[1m1:chain:AgentExecutor\u001b[22m\u001b[39m] Entering Chain run with input: {",
+                                "  \"input\": \"What is the weather in New York?\",",
+                                "  \"chat_history\": []",
+                                "}",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:AgentExecutor > \u001b[1m2:llm:ChatOpenAI\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"messages\": [",
+                                "    [",
+                                "      {",
+                                "        \"type\": \"system\",",
+                                "        \"data\": {",
+                                "          \"content\": \"You are a helpful AI assistant.\",",
+                                "          \"additional_kwargs\": {}",
+                                "        }",
+                                "      },",
+                                "      {",
+                                "        \"type\": \"human\",",
+                                "        \"data\": {",
+                                "          \"content\": \"What is the weather in New York?\",",
+                                "          \"additional_kwargs\": {}",
+                                "        }",
+                                "      }",
+                                "    ]",
+                                "  ]",
+                                "}",
+                                "\u001b[32m[tool/start]\u001b[39m [\u001b[90m1:chain:AgentExecutor > \u001b[1m3:tool:SerpAPI\u001b[22m\u001b[39m] Entering Tool run with input: \"current weather in New York\"",
+                                "\u001b[32m[llm/start]\u001b[39m [\u001b[90m1:chain:AgentExecutor > \u001b[1m4:llm:ChatOpenAI\u001b[22m\u001b[39m] Entering LLM run with input: {",
+                                "  \"messages\": [",
+                                "    [",
+                                "      {",
+                                "        \"type\": \"system\",",
+                                "        \"data\": {",
+                                "          \"content\": \"You are a helpful AI assistant.\",",
+                                "          \"additional_kwargs\": {}",
+                                "        }",
+                                "      },",
+                                "      {",
+                                "        \"type\": \"human\",",
+                                "        \"data\": {",
+                                "          \"content\": \"What is the weather in New York?\",",
+                                "          \"additional_kwargs\": {}",
+                                "        }",
+                                "      },",
+                                "      {",
+                                "        \"type\": \"ai\",",
+                                "        \"data\": {",
+                                "          \"content\": \"\",",
+                                "          \"additional_kwargs\": {",
+                                "            \"function_call\": {",
+                                "              \"name\": \"search\",",
+                                "              \"arguments\": \"{\\\"input\\\":\\\"current weather in New York\\\"}\"",
+                                "            }",
+                                "          }",
+                                "        }",
+                                "      },",
+                                "      {",
+                                "        \"type\": \"function\",",
+                                "        \"data\": {",
+                                "          \"content\": \"Now 1p 2p 3p 4p 5p 6p 7p Light Mod. Heavy. Friday, June 16. 12:15 pm. 79°. 15%. 12:30 pm. 79°. 15%. 12:45 pm. 79°. 15%. 1:00 pm.\",",
+                                "          \"name\": \"search\",",
+                                "          \"additional_kwargs\": {}",
+                                "        }",
+                                "      }",
+                                "    ]",
+                                "  ]",
+                                "}",
+                                "\u001b[36m[chain/end]\u001b[39m [\u001b[90m\u001b[1m1:chain:AgentExecutor\u001b[22m\u001b[39m] [6.69s] Exiting Chain run with output: {",
+                                "  \"output\": \"The current weather in New York is 79 degrees Fahrenheit. There is a 15% chance of rain.\"",
+                                "}",
                                 ""
                             ]
                         }

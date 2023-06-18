@@ -13,7 +13,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "hnswlib-node": "^1.4.2",
-    "langchain": "^0.0.92",
+    "langchain": "^0.0.95",
     "zod": "^3.21.4"
   },
   "devDependencies": {
